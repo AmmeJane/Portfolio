@@ -1,0 +1,82 @@
+[gd_scene load_steps=8 format=3 uid="uid://bamj6fyb7jf47"]
+
+[ext_resource type="Script" path="res://end_menu.gd" id="1_0bxkf"]
+
+[sub_resource type="SystemFont" id="SystemFont_xgfcv"]
+subpixel_positioning = 0
+
+[sub_resource type="Theme" id="Theme_5l8f8"]
+default_font = SubResource("SystemFont_xgfcv")
+default_font_size = 35
+
+[sub_resource type="SystemFont" id="SystemFont_hg7pv"]
+subpixel_positioning = 0
+
+[sub_resource type="Theme" id="Theme_5dsra"]
+default_font = SubResource("SystemFont_hg7pv")
+default_font_size = 25
+
+[sub_resource type="SystemFont" id="SystemFont_0x8yj"]
+subpixel_positioning = 0
+
+[sub_resource type="Theme" id="Theme_g0y7u"]
+default_font = SubResource("SystemFont_0x8yj")
+default_font_size = 40
+
+[node name="EndMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0bxkf")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Column"]
+layout_mode = 2
+theme = SubResource("Theme_5l8f8")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.584314, 0.584314, 0.584314, 1)
+text = "Howdy dude, you have found the orb of brilliance!"
+horizontal_alignment = 1
+
+[node name="Time" type="Label" parent="CenterContainer/Column"]
+layout_mode = 2
+theme = SubResource("Theme_5dsra")
+theme_override_colors/font_color = Color(0.792157, 0.439216, 0.188235, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Your time was 0 seconds."
+horizontal_alignment = 1
+
+[node name="Row" type="HBoxContainer" parent="CenterContainer/Column"]
+layout_mode = 2
+
+[node name="NextLevel" type="Button" parent="CenterContainer/Column/Row"]
+layout_mode = 2
+theme = SubResource("Theme_g0y7u")
+text = "NextLevel"
+
+[node name="TryAgain" type="Button" parent="CenterContainer/Column/Row"]
+layout_mode = 2
+theme = SubResource("Theme_g0y7u")
+text = "Try Again"
+
+[node name="MainMenu" type="Button" parent="CenterContainer/Column/Row"]
+layout_mode = 2
+theme = SubResource("Theme_g0y7u")
+text = "Leave"
+
+[connection signal="pressed" from="CenterContainer/Column/Row/NextLevel" to="." method="_on_next_level_pressed"]
+[connection signal="pressed" from="CenterContainer/Column/Row/TryAgain" to="." method="_on_try_again_pressed"]
+[connection signal="pressed" from="CenterContainer/Column/Row/MainMenu" to="." method="_on_main_menu_pressed"]

@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=3 uid="uid://w05tv7mixxqn"]
+
+[ext_resource type="Script" path="res://GameScript.gd" id="1_tfom5"]
+[ext_resource type="PackedScene" uid="uid://dlkliuyu2kxuv" path="res://Player/player.tscn" id="2_qqteh"]
+[ext_resource type="PackedScene" uid="uid://dgh4pldjbx1aa" path="res://Worlds/level_one.tscn" id="3_o0jsa"]
+[ext_resource type="PackedScene" uid="uid://bamj6fyb7jf47" path="res://end_menu.tscn" id="4_ettbv"]
+[ext_resource type="PackedScene" uid="uid://bbi3x84siiy6d" path="res://level_two.tscn" id="5_c1q4i"]
+[ext_resource type="Script" path="res://BaseMazeClass.gd" id="6_8kr43"]
+
+[sub_resource type="Environment" id="Environment_ci8qm"]
+background_mode = 1
+background_color = Color(0.72549, 0.643137, 0.266667, 1)
+reflected_light_source = 2
+
+[node name="Game" type="Node"]
+script = ExtResource("1_tfom5")
+
+[node name="Player" parent="." instance=ExtResource("2_qqteh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.855, 0.608695, -13.7127)
+
+[node name="Level One" parent="." instance=ExtResource("3_o0jsa")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ci8qm")
+
+[node name="EndMenu" parent="." instance=ExtResource("4_ettbv")]
+visible = false
+
+[node name="Level Two" parent="." instance=ExtResource("5_c1q4i")]
+visible = false
+BorderSize = 13
+
+[node name="BaseMazeClass" type="Node3D" parent="."]
+script = ExtResource("6_8kr43")
+
+[connection signal="PauseMenu" from="Player" to="." method="_on_player_pause_menu"]
+[connection signal="LevelCompleted" from="Level One" to="." method="_on_level_one_level_completed"]
+[connection signal="NextLevel" from="EndMenu" to="." method="_on_end_menu_next_level"]
+[connection signal="TryAgain" from="EndMenu" to="." method="_on_end_menu_try_again"]

@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://cf0v45gmjcjxj"]
+
+[ext_resource type="BoxMesh" uid="uid://pyid5aljw75j" path="res://Worlds/box.tres" id="1_6u5a7"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_wtl5d"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1qiwb"]
+size = Vector3(3.99388, 4.94034, 4.00167)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_73g4f"]
+albedo_color = Color(1, 1, 0.164706, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_frb1u"]
+material = SubResource("StandardMaterial3D_73g4f")
+size = Vector3(4, 5, 4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y1pxq"]
+albedo_color = Color(0.988235, 0.556863, 0.756863, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_uewf4"]
+material = SubResource("StandardMaterial3D_y1pxq")
+size = Vector3(4, 5, 4)
+
+[node name="MeshLibrary" type="Node3D"]
+
+[node name="Wall" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_6u5a7")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Wall"]
+physics_material_override = SubResource("PhysicsMaterial_wtl5d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall/StaticBody3D"]
+shape = SubResource("BoxShape3D_1qiwb")
+
+[node name="Border" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.61619)
+mesh = SubResource("BoxMesh_frb1u")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Border"]
+physics_material_override = SubResource("PhysicsMaterial_wtl5d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Border/StaticBody3D"]
+shape = SubResource("BoxShape3D_1qiwb")
+
+[node name="Done" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 13.4195)
+mesh = SubResource("BoxMesh_uewf4")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Done"]
+physics_material_override = SubResource("PhysicsMaterial_wtl5d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Done/StaticBody3D"]
+shape = SubResource("BoxShape3D_1qiwb")

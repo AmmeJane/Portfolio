@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbi3x84siiy6d"]
+
+[ext_resource type="Script" path="res://level_two.gd" id="1_2u5ee"]
+[ext_resource type="MeshLibrary" uid="uid://biksut1cvcb7e" path="res://Worlds/meshLIBRARY.meshlib" id="2_n4lmv"]
+
+[node name="Level Two" type="Node3D"]
+script = ExtResource("1_2u5ee")
+BorderSize = 3
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.907777, 0.419452, 0, -0.419452, 0.907777, 0, 18.0495, 29.1776)
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("2_n4lmv")
+cell_size = Vector3(4, 5, 4)
