@@ -1,0 +1,108 @@
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local RemoteEvent = ReplicatedStorage.Remotes:FindFirstChildOfClass("RemoteEvent")
+
+local tracks = workspace:WaitForChild("TrackFolder")
+
+local PotentialTies = tracks:GetDescendants()
+local Ties = {}
+
+for i,x in ipairs(PotentialTies) do
+	if x.Name == "Tie" then
+		table.insert(Ties, x)
+	end
+end
+
+local ReverseTies = table.clone(Ties)
+
+for i = 1, math.floor(#ReverseTies/2) do
+	local j = #ReverseTies - i + 1
+	ReverseTies[i], ReverseTies[j] = ReverseTies[j], ReverseTies[i]
+end
+
+
+local minecart = script.Parent
+local referencePart = minecart.ReferencePart
+
+local seat = minecart.Seat
+
+local TweenTime = 0.2
+local TweenSpeed = 50
+
+local tweenService = game:GetService("TweenService")
+
+local tweenInfo = TweenInfo.new(TweenTime, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+
+function ChangeTrans(amount)
+	for i,x in ipairs(minecart:GetDescendants()) do
+		if x:IsA("BasePart") then
+			x.Transparency = amount
+		end
+	end
+end
+ChangeTrans(1)
+
+
+
+local function MinecartButtonPressed(player)
+	print(player.name.." fired the remote event")
+	
+	local Humanoid = player.Character:FindFirstChild("Humanoid")
+	
+	minecart.Seat:Sit(Humanoid)
+end
+RemoteEvent.OnServerEvent:Connect(MinecartButtonPressed)
+
+
+seat:GetPropertyChangedSignal("Occupant"):Connect(function()
+	
+	local OldTieCF = minecart:GetPivot()
+
+	if not seat.Occupant then return end
+	
+	local function Travel(TiesTable,Backwards)
+
+		
+		for i = (not Backwards) and 1 or #TiesTable, (not Backwards) and #TiesTable or 1, (not Backwards) and 1 or -1 do
+			
+			local Tie = TiesTable[i]
+			
+			if i == 1 then
+				ChangeTrans(0)
+			end
+			
+			if OldTieCF.Position == Tie.CFrame.Position then continue end
+
+
+			local NextRot = CFrame.lookAt(OldTieCF.Position, Tie.CFrame.Position)
+
+			TweenTime = (OldTieCF.Position - Tie.CFrame.Position).Magnitude/TweenSpeed
+			tweenInfo = TweenInfo.new(TweenTime, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+
+			local tweenToNextTie = tweenService:Create(referencePart, tweenInfo, {CFrame = CFrame.new(Tie.CFrame.Position)*NextRot.Rotation})
+			tweenToNextTie:Play()
+
+			tweenToNextTie.Completed:Wait()
+
+			OldTieCF = Tie.CFrame
+			
+
+		end
+	end
+
+
+	
+
+	while seat.Occupant do
+		Travel(Ties, false)
+		Travel(Ties, true)
+	end
+
+	
+	local OldCF = CFrame.new()
+
+end)
+
+
+

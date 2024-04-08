@@ -1,0 +1,163 @@
+local X = 20
+local Z = 20
+
+local Size = 10
+local Height = 30
+
+local RailTable = {}
+local Counter = 0
+
+
+local Track = game.ReplicatedStorage.Track
+local Cart = game.ReplicatedStorage.SpawnableMinecart
+local Warehouse = game.ReplicatedStorage.WarehouseLP
+
+local grid = {}
+
+--Make folders for the parts
+local TrackFolder = Instance.new("Folder")
+TrackFolder.Parent = workspace
+TrackFolder.Name = "TrackFolder"
+
+local GrassFolder = Instance.new("Folder")
+GrassFolder.Parent = workspace
+GrassFolder.Name = "GrassFolder"
+
+
+--Functions to make the grass and rails and one cart
+function MakeGrass(x,yPos,z, Name)
+	local part = Instance.new("Part")
+	part.Anchored = true
+
+	part.Material = Enum.Material.Grass
+	part.BrickColor = BrickColor.new("Bright green")
+
+	part.Position = Vector3.new(x*Size, yPos, z*Size)
+	part.Size = Vector3.new(Size, 30, Size)
+	part.Name = Name
+	part.Parent = GrassFolder
+end
+
+function MakeRails(x,yPos,z, Name)
+	local NewTrack = Track:Clone()
+	NewTrack:PivotTo(CFrame.new(Vector3.new(x*Size, yPos+Height/2+1, z*Size))) 
+	NewTrack.Name = Name
+	NewTrack.Parent = TrackFolder
+end
+
+function MakeCart(x,yPos,z, Name)
+	local NewCart = Cart:Clone()
+	NewCart:PivotTo(CFrame.new(Vector3.new(x*Size, yPos+Height/2+1, z*Size))) 
+	NewCart.Name = Name
+	NewCart.Parent = workspace
+end
+
+function MakeWarehouse(x,yPos,z, Name)
+	local NewWH = Warehouse:Clone()
+	NewWH:PivotTo(CFrame.new(Vector3.new(x*Size, yPos+Height/2+1, z*Size))) 
+	NewWH.Name = Name
+	NewWH.Parent = workspace
+end
+
+--Path generation
+function FindNextRailPlacement(LastPosX,LastPosY, RailCounter)
+	
+	local function ShuffleInPlace(t)
+		for i = #t, 2, -1 do
+			local j = math.random(i)
+			t[i], t[j] = t[j], t[i]
+		end
+	end
+	
+	local DirectionalArray = {{0,1},{1,0},{0,-1},{-1,0}}
+	DirectionalArray = {{0,1},{1,0}}
+	ShuffleInPlace(DirectionalArray)
+
+	for i in DirectionalArray do
+		print(DirectionalArray[i][1],DirectionalArray[i][2])
+
+		local NewX = LastPosX+DirectionalArray[i][1]
+		local NewY = LastPosY+DirectionalArray[i][2]
+
+		print("positions", NewX, NewY)
+
+		local yPos = grid[NewX][NewY]
+
+		print(yPos)
+
+		if yPos ~= nil then
+
+			MakeRails(NewX,yPos,NewY,RailCounter.."_Rail")
+			print("yup")
+			return NewX,NewY
+		else
+			print("nope")
+		end
+	end
+end
+
+function GenerateRailPath()
+	local PathLen = 50
+	local CurrentX = 1
+	local CurrentY = 1
+	local RailCounter = 0
+	local RailTable = {{CurrentX, CurrentY}}
+	local CanPlace = true
+	
+	MakeRails(CurrentX,grid[CurrentX][CurrentY],CurrentY,"1_Rail")
+	MakeCart(CurrentX,grid[CurrentX][CurrentY],CurrentY, "SpawnableMinecart")
+	
+	for RailCounter = 2,20 do
+		
+		--check here if next placement is in table
+		print(RailTable)
+		
+		
+		
+		if CanPlace == true then
+			CurrentX, CurrentY = FindNextRailPlacement(CurrentX,CurrentY, RailCounter)
+			print("can place")
+		else
+			print("cant place")
+		end
+		
+		
+		table.insert(RailTable,{CurrentX, CurrentY})
+		
+	end
+end
+
+--Generates the land and places the rails
+function GenerateLand()
+
+	for x = 1, X do
+		grid[x] = {}
+
+		for z = 1, Z do
+			grid[x][z] = math.noise(x/10, z/10) * Height
+			
+			local yPos = grid[x][z]
+
+			Counter+=1
+
+			MakeGrass(x,yPos,z,Counter.."_Grass")
+			
+			if Counter == 12 then
+				MakeWarehouse(x,yPos,z, "Warehouse")
+			end
+			
+		end
+	end
+
+	for x = 1, X do
+		for z = 1, Z do
+			local yPos = grid[x][z]
+			--MakeRails(x,yPos,z,Counter.."_Rail")
+		end
+	end
+	
+	GenerateRailPath()
+	
+end
+
+GenerateLand()
